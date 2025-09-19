@@ -161,11 +161,20 @@ def draw_board(highlight_solution=None):
         True, (20,20,20))
     screen.blit(info, (MARGIN, screen_h-45))
 
-    # Show win overlay if game won
+    # At the bottom of the board, above controls
+    timer_text = SMALL_FONT.render(f"Time: {int(elapsed_time)}s", True, (0,0,0))
+    screen.blit(timer_text, (MARGIN, screen_h-25))
+
+    # Modify the win overlay to show final time
     if game_won:
         overlay = BIG_FONT.render("YOU WIN!", True, (0,180,0))
-        rect = overlay.get_rect(center=(screen_w//2, screen_h//2))
+        rect = overlay.get_rect(center=(screen_w//2, screen_h//2 - 30))
         screen.blit(overlay, rect)
+
+        time_overlay = FONT.render(f"Time: {int(elapsed_time)}s", True, (0,180,0))
+        rect2 = time_overlay.get_rect(center=(screen_w//2, screen_h//2 + 30))
+        screen.blit(time_overlay, rect2)
+
 
     pygame.display.flip()
 
@@ -177,6 +186,9 @@ def cell_at_pixel(px, py):
 running, hint_active = True, None
 left_held = False
 right_held = False
+
+start_time = time.time()
+elapsed_time = 0
 
 
 while running:
@@ -217,6 +229,9 @@ while running:
                     print('Hint unavailable.')
         
             elif event.key == pygame.K_n:
+                start_time = time.time()  # reset timer
+                elapsed_time = 0
+
                 print("Generating new board...")
                 # 1. Generate new puzzle
                 find_and_save_unique_maps(WIDTH, HEIGHT, attempts=5000, want=1)
@@ -295,6 +310,9 @@ while running:
     # auto-clear win after 3s
     if game_won and time.time() - win_time > 3:
         game_won = False
+
+    if not game_won:
+        elapsed_time = time.time() - start_time
 
     draw_board(highlight_solution=None)
 
