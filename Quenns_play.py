@@ -215,6 +215,33 @@ while running:
                     print('Placed one hint.')
                 else:
                     print('Hint unavailable.')
+        
+            elif event.key == pygame.K_n:
+                print("Generating new board...")
+                # 1. Generate new puzzle
+                find_and_save_unique_maps(WIDTH, HEIGHT, attempts=5000, want=1)
+                # 2. Load new puzzle into REGIONS
+                with open('puzzle.csv', newline="") as f:
+                    reader = csv.reader(f)
+                    REGIONS[:] = [[int(cell) for cell in row] for row in reader]
+                # 3. Update REGION_MAP and REGION_IDS
+                REGION_MAP = initial_region_map(REGIONS)
+                REGION_IDS = list(REGION_MAP.keys())
+                # 4. Clear current board
+                board.clear()
+                hint_active = None
+                game_won = False
+                # 5. Animate new board
+                for y in range(HEIGHT):
+                    for x in range(WIDTH):
+                        rect = pygame.Rect(MARGIN + x*CELL_SIZE, MARGIN + y*CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                        color = REGION_COLORS[REGIONS[y][x] % len(REGION_COLORS)]
+                        pygame.draw.rect(screen, color, rect)
+                        pygame.draw.rect(screen, (120,120,120), rect, 1)
+                        pygame.display.flip()
+                        pygame.time.delay(30)  # sequential cell animation
+                print("New board ready!")
+
         elif event.type == pygame.MOUSEBUTTONDOWN:
             cell = cell_at_pixel(*event.pos)
             if not cell: continue
