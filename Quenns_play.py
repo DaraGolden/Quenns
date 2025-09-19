@@ -12,10 +12,9 @@ from Quenns_generation import find_and_save_unique_maps
 # ---------- Puzzle definition ----------
 CELL_SIZE = 70
 MARGIN = 50
-WIDTH = 7
-HEIGHT = 7
+size = 8
 
-find_and_save_unique_maps(WIDTH, HEIGHT, attempts=5000, want=1)
+find_and_save_unique_maps(size, size, attempts=5000, want=1)
 
 with open('puzzle.csv', newline="") as f:
     reader = csv.reader(f)
@@ -30,7 +29,7 @@ REGION_COLORS = [
 
 # ---------- Helper functions ----------
 def in_bounds(x, y):
-    return 0 <= x < WIDTH and 0 <= y < HEIGHT
+    return 0 <= x < size and 0 <= y < size
 
 def neighbors(x, y):
     for dx in (-1, 0, 1):
@@ -42,8 +41,8 @@ def neighbors(x, y):
 def initial_region_map(regions):
     from collections import defaultdict
     rmap = defaultdict(list)
-    for y in range(HEIGHT):
-        for x in range(WIDTH):
+    for y in range(size):
+        for x in range(size):
             rmap[regions[y][x]].append((x, y))
     return dict(rmap)
 
@@ -98,9 +97,9 @@ def check_user_solution(user_board):
         for nx, ny in neighbors(x, y):
             if user_board.get((nx, ny)) == "Q":
                 return {'valid_complete': False, 'reason': 'adjacent_crowns'}
-    for y in range(HEIGHT):
+    for y in range(size):
         if row_counts[y] != 1: return {'valid_complete': False, 'reason': f'row_{y}_count_{row_counts[y]}'}
-    for x in range(WIDTH):
+    for x in range(size):
         if col_counts[x] != 1: return {'valid_complete': False, 'reason': f'col_{x}_count_{col_counts[x]}'}
     for rid in REGION_IDS:
         if region_counts[rid] != 1: return {'valid_complete': False, 'reason': f'region_{rid}_count_{region_counts[rid]}'}
@@ -122,8 +121,8 @@ BIG_FONT = pygame.font.SysFont(None, 72, bold=True)
 SMALL_FONT = pygame.font.SysFont(None, 22)
 X_FONT = pygame.font.SysFont(None, 28, bold=True)
 
-screen_w = WIDTH * CELL_SIZE + MARGIN*2
-screen_h = HEIGHT * CELL_SIZE + MARGIN*2 + 60
+screen_w = size * CELL_SIZE + MARGIN*2
+screen_h = size * CELL_SIZE + MARGIN*2 + 60
 screen = pygame.display.set_mode((screen_w, screen_h))
 pygame.display.set_caption('Queens Puzzle Prototype')
 
@@ -135,8 +134,8 @@ win_time = 0
 
 def draw_board(highlight_solution=None):
     screen.fill((230,230,230))
-    for y in range(HEIGHT):
-        for x in range(WIDTH):
+    for y in range(size):
+        for x in range(size):
             rid = REGIONS[y][x]
             rect = pygame.Rect(MARGIN + x*CELL_SIZE, MARGIN + y*CELL_SIZE, CELL_SIZE, CELL_SIZE)
             pygame.draw.rect(screen, REGION_COLORS[rid % len(REGION_COLORS)], rect)
@@ -229,12 +228,11 @@ while running:
                     print('Hint unavailable.')
         
             elif event.key == pygame.K_n:
-                start_time = time.time()  # reset timer
-                elapsed_time = 0
+                
 
                 print("Generating new board...")
                 # 1. Generate new puzzle
-                find_and_save_unique_maps(WIDTH, HEIGHT, attempts=5000, want=1)
+                find_and_save_unique_maps(size, size, attempts=5000, want=1)
                 # 2. Load new puzzle into REGIONS
                 with open('puzzle.csv', newline="") as f:
                     reader = csv.reader(f)
@@ -247,8 +245,8 @@ while running:
                 hint_active = None
                 game_won = False
                 # 5. Animate new board
-                for y in range(HEIGHT):
-                    for x in range(WIDTH):
+                for y in range(size):
+                    for x in range(size):
                         rect = pygame.Rect(MARGIN + x*CELL_SIZE, MARGIN + y*CELL_SIZE, CELL_SIZE, CELL_SIZE)
                         color = REGION_COLORS[REGIONS[y][x] % len(REGION_COLORS)]
                         pygame.draw.rect(screen, color, rect)
@@ -256,6 +254,8 @@ while running:
                         pygame.display.flip()
                         pygame.time.delay(30)  # sequential cell animation
                 print("New board ready!")
+                start_time = time.time()  # reset timer
+                elapsed_time = 0
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             cell = cell_at_pixel(*event.pos)
