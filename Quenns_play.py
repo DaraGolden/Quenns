@@ -32,6 +32,8 @@ import sys
 from collections import defaultdict
 from copy import deepcopy
 import time
+import csv
+from Quenns_generation import find_and_save_unique_maps
 
 # ---------- Puzzle definition (example) ----------
 # GRID: width x height
@@ -52,22 +54,19 @@ MARGIN = 50
 #     [10,10,14,14,14,13,13],
 # ]
 
-REGIONS = [[0,1,2,3,4],
-           [0,1,2,3,4],
-            [0,1,2,3,4],
-            [0,1,2,3,4],
-            [0,1,2,3,4]]
+WIDTH = 7
+HEIGHT = 7
 
-REGIONS = [[0,1,2,2,2,3,3],
- [0,1,4,4,2,5,3],
- [0,1,4,2,2,5,5],
- [0,1,1,2,2,2,2],
- [0,1,6,2,2,2,2],
- [0,1,6,2,2,2,2],
- [0,0,0,0,0,0,0]]
+find_and_save_unique_maps(WIDTH, HEIGHT, attempts=5000, want=1)
 
-WIDTH = len(REGIONS)
-HEIGHT = len(REGIONS)
+
+"""Load puzzle grid back into nested list (like REGIONS)."""
+with open('puzzle.csv', newline="") as f:
+    reader = csv.reader(f)
+    REGIONS = [[int(cell) for cell in row] for row in reader]
+
+
+
 REGION_COLORS = [
     (255, 99, 71),    # Tomato red
     (0, 191, 255),    # Deep sky blue

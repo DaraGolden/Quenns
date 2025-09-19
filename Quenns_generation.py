@@ -95,27 +95,34 @@ def generate_voronoi_regions(W, H, n_regions, rng):
     return mat
 
 # --------------- Save to CSV ----------------
-def save_puzzle_to_csv(regions, solution, puzzle_id, base_filename="queens_puzzle"):
-    H, W = len(regions), len(regions[0])
+# def save_puzzle_to_csv(regions, solution, puzzle_id, base_filename="queens_puzzle"):
+#     H, W = len(regions), len(regions[0])
 
-    # Save region layout
-    regions_filename = f"{base_filename}_{puzzle_id}_regions.csv"
-    with open(regions_filename, "w", newline="") as f:
+#     # Save region layout
+#     regions_filename = f"{base_filename}_{puzzle_id}_regions.csv"
+#     with open(regions_filename, "w", newline="") as f:
+#         writer = csv.writer(f)
+#         writer.writerow(["x", "y", "region"])
+#         for y in range(H):
+#             for x in range(W):
+#                 writer.writerow([x, y, regions[y][x]])
+
+#     # Save solution
+#     solution_filename = f"{base_filename}_{puzzle_id}_solution.csv"
+#     with open(solution_filename, "w", newline="") as f:
+#         writer = csv.writer(f)
+#         writer.writerow(["x", "y"])
+#         for (x, y) in solution:
+#             writer.writerow([x, y])
+    
+def save_puzzle_to_csv( regions):
+    """Save a single puzzle grid to CSV (row x col)."""
+    with open('puzzle.csv', "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["x", "y", "region"])
-        for y in range(H):
-            for x in range(W):
-                writer.writerow([x, y, regions[y][x]])
+        for row in regions:
+            writer.writerow(row)
 
-    # Save solution
-    solution_filename = f"{base_filename}_{puzzle_id}_solution.csv"
-    with open(solution_filename, "w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(["x", "y"])
-        for (x, y) in solution:
-            writer.writerow([x, y])
 
-    print(f"Saved puzzle #{puzzle_id} to {regions_filename} and {solution_filename}")
 
 # --------------- Main Driver ----------------
 def find_and_save_unique_maps(W, H, attempts=2000, want=1, seed=None):
@@ -130,7 +137,8 @@ def find_and_save_unique_maps(W, H, attempts=2000, want=1, seed=None):
         cnt, sol = solver_count_and_one_solution_from_regions(regions, limit=2)
         if cnt == 1:
             found += 1
-            save_puzzle_to_csv(regions, sol, found)
+            print(regions,sol,found)
+            save_puzzle_to_csv(regions)
             print(f"[FOUND] Puzzle {found} after {tries} tries (elapsed {time.time()-start_time:.2f}s)")
     if found == 0:
         print("No unique-solution puzzles found.")
