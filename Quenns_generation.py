@@ -3,6 +3,8 @@ import random
 import time
 from collections import defaultdict, deque
 
+# TODO: optimisation for larger grids. Anything larger than 8x8 is slow.
+
 # --------------- Helpers ----------------
 def in_bounds(x, y, W, H):
     return 0 <= x < W and 0 <= y < H

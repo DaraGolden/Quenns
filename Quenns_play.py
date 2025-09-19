@@ -9,6 +9,13 @@ import time
 import csv
 from Quenns_generation import find_and_save_unique_maps
 
+# TODO: Add a high score tracker by the timer and save the data to a csv file.
+# TODO: Add a main menu with options to select grid size and view high scores.
+# TODO: Add sound effects for placing/removing crowns and winning.
+# TODO: Add animations for and winning.
+# TODO: Improve hint system so it rules out invalid placements rather than just placing a crown.
+# TODO: Add a confirmation dialog when resetting the board.
+
 # ---------- Puzzle definition ----------
 CELL_SIZE = 70
 MARGIN = 50
