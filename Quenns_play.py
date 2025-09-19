@@ -12,7 +12,17 @@ from Quenns_generation import find_and_save_unique_maps
 # ---------- Puzzle definition ----------
 CELL_SIZE = 70
 MARGIN = 50
-size = 8
+
+# Ask the user for the board size at runtime
+while True:
+    try:
+        size = int(input("Enter the grid size (e.g., 7 for a 7x7 board): "))
+        if size < 5 or size > 9:
+            print("Please enter a number between 5 and 9.")
+            continue
+        break
+    except ValueError:
+        print("Please enter a valid integer.")
 
 find_and_save_unique_maps(size, size, attempts=5000, want=1)
 
