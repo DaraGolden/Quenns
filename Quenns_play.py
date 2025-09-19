@@ -175,6 +175,9 @@ def cell_at_pixel(px, py):
     return (x, y) if in_bounds(x, y) else None
 
 running, hint_active = True, None
+left_held = False
+right_held = False
+
 
 while running:
     clock.tick(30)
@@ -213,35 +216,53 @@ while running:
                 else:
                     print('Hint unavailable.')
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            cell = cell_at_pixel(*pos)
-            if cell:
-                if event.button == 1:  # left click cycle
-                    current = board.get(cell)
-                    if current is None:
-                        board[cell] = "X"
+            cell = cell_at_pixel(*event.pos)
+            if not cell: continue
 
-                    elif current == "X":
-                        temp = dict(board); temp[cell] = "Q"
-                        if is_valid_partial(temp):
-                            board[cell] = "Q"
-                            hint_active = None
+            if event.button == 1:  # left click
+                left_held = True
+                current = board.get(cell)
+                if current is None:
+                    board[cell] = "X"
+                elif current == "X":
+                    temp = dict(board); temp[cell] = "Q"
+                    if is_valid_partial(temp):
+                        board[cell] = "Q"
+                        hint_active = None
+                        # Auto win check
+                        res = check_user_solution(board)
+                        if res.get('valid_complete') and res.get('solutions_count') == 1:
+                            print("YOU WIN!")
+                            game_won = True
+                            win_time = time.time()
+                    else:
+                        print("Invalid placement.")
+                elif current == "Q":
+                    del board[cell]
 
-                            # ✅ Auto-check win condition after adding a Queen
-                            res = check_user_solution(board)
-                            if res.get('valid_complete') and res.get('solutions_count') == 1:
-                                print("YOU WIN!")
-                                game_won = True
-                                win_time = time.time()
-                        else:
-                            print('Invalid placement.')
+            elif event.button == 3:  # right click
+                right_held = True
+                if board.get(cell) == "X":
+                    del board[cell]
 
-                    elif current == "Q":
-                        del board[cell]
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1: left_held = False
+            elif event.button == 3: right_held = False
 
-                elif event.button == 3:  # right click clear
-                    if cell in board:
-                        del board[cell]
+        elif event.type == pygame.MOUSEMOTION:
+            cell = cell_at_pixel(*event.pos)
+            if not cell: continue
+
+            if left_held:
+                # drag only sets empty cells to X
+                if cell not in board:
+                    board[cell] = "X"
+
+            elif right_held:
+                # drag clears Xs only
+                if board.get(cell) == "X":
+                    del board[cell]
+
 
 
     # auto-clear win after 3s
