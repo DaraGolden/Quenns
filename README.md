@@ -36,7 +36,8 @@ Timer – A timer at the bottom of the screen tracks how long you’ve been solv
 Auto-win detection – No need for a “Check” button, the game verifies instantly when you’ve solved the puzzle.
 
 🖼️ Screenshots
-![Game window example](window_example.png)
+![Game window example](window%20example.png)
+
 ⌨️ Controls
 Action	Mouse/Keyboard
 Place/Change cell	Left click
